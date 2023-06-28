@@ -11,6 +11,7 @@ import androidx.lifecycle.MutableLiveData;
 import java.util.List;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.functions.Consumer;
 import io.reactivex.rxjava3.schedulers.Schedulers;
@@ -21,6 +22,10 @@ public class MainViewModel extends AndroidViewModel {
 
     private MutableLiveData<List<Movie>> movies = new MutableLiveData<>();
 
+    private CompositeDisposable subsrcibes = new CompositeDisposable();
+
+    private int page = 1;
+
     public MainViewModel(@NonNull Application application) {
         super(application);
     }
@@ -30,7 +35,7 @@ public class MainViewModel extends AndroidViewModel {
     }
 
     public void loadMovies() {
-        Disposable disposable = ApiFactory.getApiService().loadMovies()
+        Disposable disposable = ApiFactory.getApiService().loadMovies(page)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Consumer<Response>() {
@@ -44,5 +49,13 @@ public class MainViewModel extends AndroidViewModel {
                         Log.d(TAG, "setMovies failed");
                     }
                 });
+        subsrcibes.add(disposable);
+        page++;
+    }
+
+    @Override
+    protected void onCleared() {
+        super.onCleared();
+        subsrcibes.dispose();
     }
 }
