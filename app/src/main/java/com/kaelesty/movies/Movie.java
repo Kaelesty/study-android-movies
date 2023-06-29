@@ -1,5 +1,7 @@
 package com.kaelesty.movies;
 
+import androidx.annotation.NonNull;
+
 import com.google.gson.annotations.SerializedName;
 
 public class Movie {

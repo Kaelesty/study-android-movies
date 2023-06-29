@@ -4,14 +4,14 @@ import com.google.gson.annotations.SerializedName;
 
 public class Rating {
 
-    @SerializedName("rating")
+    @SerializedName("kp")
     private double rating;
 
     public double getRating() {
         return rating;
     }
 
-    public Rating(float rating) {
+    public Rating(double rating) {
         this.rating = rating;
     }
 }

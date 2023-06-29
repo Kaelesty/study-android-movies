@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    app:cardUseCompatPadding="true"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -25,12 +26,12 @@
             android:layout_height="wrap_content"
             tools:text="10.0"
             android:textColor="@android:color/white"
-            android:background="@android:color/holo_green_light"
+            tools:background="@drawable/circle_green"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             android:layout_margin="5dp"
             android:padding="5dp"
-            android:textSize="16sp"
+            android:textSize="20sp"
             />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
