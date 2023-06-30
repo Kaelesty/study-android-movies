@@ -20,10 +20,15 @@ import java.util.List;
 public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewHoled> {
 
     private List<Movie> movies = new ArrayList<>();
+    private OnReachEndListener onReachEndListener;
 
     public void setMovies(List<Movie> movies) {
         this.movies = movies;
         notifyDataSetChanged();
+    }
+
+    public void setOnReachEndListener(OnReachEndListener onReachEndListener) {
+        this.onReachEndListener = onReachEndListener;
     }
 
     @NonNull
@@ -56,10 +61,18 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
         else if (rating > 5) {
             backgroundId = R.drawable.circle_orange;
         } else {
-            backgroundId = R.drawable.circle_green;
+            backgroundId = R.drawable.circle_red;
         }
         Drawable drawable = ContextCompat.getDrawable(holder.itemView.getContext(), backgroundId);
         holder.textViewRating.setBackground(drawable);
+        if (position == movies.size() - 10) {
+            onReachEndListener.onReachEnd();
+        }
+    }
+
+    public interface OnReachEndListener {
+
+        public void onReachEnd();
     }
 
     @Override

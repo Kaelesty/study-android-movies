@@ -34,6 +34,13 @@ public class MainActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.recyclerViewMovies);
         adapter = new MoviesAdapter();
 
+        adapter.setOnReachEndListener(new MoviesAdapter.OnReachEndListener() {
+            @Override
+            public void onReachEnd() {
+                viewModel.loadMovies();
+            }
+        });
+
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
 
@@ -46,6 +53,16 @@ public class MainActivity extends AppCompatActivity {
                 Log.d(TAG, movies.toString());
             }
         });
-        viewModel.loadMovies();
+
+        viewModel.getIsLoading().observe(this, new Observer<Boolean>() {
+            @Override
+            public void onChanged(Boolean aBoolean) {
+                if (aBoolean) {
+                    progressBar.setVisibility(View.VISIBLE);
+                } else {
+                    progressBar.setVisibility(View.GONE);
+                }
+            }
+        });
     }
 }

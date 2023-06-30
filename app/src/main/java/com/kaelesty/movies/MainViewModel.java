@@ -13,6 +13,7 @@ import java.util.List;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.disposables.Disposable;
+import io.reactivex.rxjava3.functions.Action;
 import io.reactivex.rxjava3.functions.Consumer;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
@@ -21,6 +22,7 @@ public class MainViewModel extends AndroidViewModel {
     public static final String TAG = "MainViewModel";
 
     private MutableLiveData<List<Movie>> movies = new MutableLiveData<>();
+    private MutableLiveData<Boolean> isLoading = new MutableLiveData<>();
 
     private CompositeDisposable subsrcibes = new CompositeDisposable();
 
@@ -28,6 +30,7 @@ public class MainViewModel extends AndroidViewModel {
 
     public MainViewModel(@NonNull Application application) {
         super(application);
+        loadMovies();
     }
 
     public LiveData<List<Movie>> getMovies() {
@@ -35,13 +38,36 @@ public class MainViewModel extends AndroidViewModel {
     }
 
     public void loadMovies() {
+        Boolean loading = isLoading.getValue();
+        if (loading != null & loading) {
+            return;
+        }
         Disposable disposable = ApiFactory.getApiService().loadMovies(page)
                 .subscribeOn(Schedulers.io())
+                .doOnSubscribe(new Consumer<Disposable>() {
+                    @Override
+                    public void accept(Disposable disposable) throws Throwable {
+                        isLoading.postValue(true);
+                    }
+                })
+                .doAfterTerminate(new Action() {
+                    @Override
+                    public void run() throws Throwable {
+                        isLoading.postValue(false);
+                    }
+                })
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Consumer<Response>() {
                     @Override
                     public void accept(Response response) throws Throwable {
-                        movies.postValue(response.getMovies());
+                        List<Movie> currentMovies = movies.getValue();
+                        if (currentMovies != null) {
+                            currentMovies.addAll(response.getMovies());
+                            movies.postValue(currentMovies);
+                        }
+                        else {
+                            movies.postValue(response.getMovies());
+                        }
                     }
                 }, new Consumer<Throwable>() {
                     @Override
@@ -51,6 +77,10 @@ public class MainViewModel extends AndroidViewModel {
                 });
         subsrcibes.add(disposable);
         page++;
+    }
+
+    public LiveData<Boolean> getIsLoading() {
+        return isLoading;
     }
 
     @Override
