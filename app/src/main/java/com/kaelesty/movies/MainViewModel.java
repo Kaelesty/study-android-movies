@@ -39,8 +39,10 @@ public class MainViewModel extends AndroidViewModel {
 
     public void loadMovies() {
         Boolean loading = isLoading.getValue();
-        if (loading != null & loading) {
-            return;
+        if (loading != null) {
+            if (loading) {
+                return;
+            }
         }
         Disposable disposable = ApiFactory.getApiService().loadMovies(page)
                 .subscribeOn(Schedulers.io())

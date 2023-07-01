@@ -21,6 +21,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
 
     private List<Movie> movies = new ArrayList<>();
     private OnReachEndListener onReachEndListener;
+    private OnClickListener onClickListener;
 
     public void setMovies(List<Movie> movies) {
         this.movies = movies;
@@ -29,6 +30,10 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
 
     public void setOnReachEndListener(OnReachEndListener onReachEndListener) {
         this.onReachEndListener = onReachEndListener;
+    }
+
+    public void setOnClickListener(OnClickListener onClickListener) {
+        this.onClickListener = onClickListener;
     }
 
     @NonNull
@@ -65,6 +70,14 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
         }
         Drawable drawable = ContextCompat.getDrawable(holder.itemView.getContext(), backgroundId);
         holder.textViewRating.setBackground(drawable);
+        if (onClickListener != null) {
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onClickListener.OnClick(movie);
+                }
+            });
+        }
         if (position == movies.size() - 10) {
             onReachEndListener.onReachEnd();
         }
@@ -73,6 +86,10 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
     public interface OnReachEndListener {
 
         public void onReachEnd();
+    }
+
+    public interface OnClickListener {
+        public void OnClick(Movie movie);
     }
 
     @Override
