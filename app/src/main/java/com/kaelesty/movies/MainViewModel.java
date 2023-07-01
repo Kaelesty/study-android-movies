@@ -59,9 +59,9 @@ public class MainViewModel extends AndroidViewModel {
                     }
                 })
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<Response>() {
+                .subscribe(new Consumer<MoviesResponse>() {
                     @Override
-                    public void accept(Response response) throws Throwable {
+                    public void accept(MoviesResponse response) throws Throwable {
                         List<Movie> currentMovies = movies.getValue();
                         if (currentMovies != null) {
                             currentMovies.addAll(response.getMovies());

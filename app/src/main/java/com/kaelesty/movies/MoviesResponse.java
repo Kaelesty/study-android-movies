@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import com.google.gson.annotations.SerializedName;
 
-public class Response {
+public class MoviesResponse {
 
     @SerializedName("docs")
     private ArrayList<Movie> movies;
@@ -13,7 +13,7 @@ public class Response {
         return movies;
     }
 
-    public Response(ArrayList<Movie> movies) {
+    public MoviesResponse(ArrayList<Movie> movies) {
         this.movies = movies;
     }
 }
