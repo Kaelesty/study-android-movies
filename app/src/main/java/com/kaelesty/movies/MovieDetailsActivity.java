@@ -1,6 +1,8 @@
 package com.kaelesty.movies;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.content.Context;
 import android.content.Intent;
@@ -10,9 +12,13 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 
+import java.util.List;
+
 public class MovieDetailsActivity extends AppCompatActivity {
 
     public static final String MOVIE_EXTRA_KEY = "movie";
+
+    private MovieDetailsViewModel viewModel;
 
     private ImageView imageViewPoster;
     private TextView textViewTitle;
@@ -24,7 +30,20 @@ public class MovieDetailsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie_details);
         initViews();
-        setMovieContent();
+
+        viewModel = new ViewModelProvider(this).get(MovieDetailsViewModel.class);
+
+        Movie movie = (Movie) getIntent().getSerializableExtra(MOVIE_EXTRA_KEY);
+
+        viewModel.loadTrailers(movie.getId());
+        viewModel.getTrailers().observe(this, new Observer<List<Trailer>>() {
+            @Override
+            public void onChanged(List<Trailer> trailers) {
+
+            }
+        });
+
+        setMovieContent(movie);
     }
 
     private void initViews() {
@@ -34,8 +53,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
         textViewDesc = findViewById(R.id.textViewDesc);
     }
 
-    private void setMovieContent() {
-        Movie movie = (Movie) getIntent().getSerializableExtra(MOVIE_EXTRA_KEY);
+    private void setMovieContent(Movie movie) {
 
         textViewTitle.setText(movie.getName());
         textViewYear.setText(String.valueOf(movie.getYear()));

@@ -13,7 +13,7 @@ public class MovieDetailsResponse {
         this.videos = videos;
     }
 
-    public Videos getTrailers() {
+    public Videos getVideos() {
         return videos;
     }
 }
