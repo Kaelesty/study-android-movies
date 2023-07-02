@@ -17,7 +17,7 @@ import com.bumptech.glide.Glide;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewHoled> {
+public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewHolder> {
 
     private List<Movie> movies = new ArrayList<>();
     private OnReachEndListener onReachEndListener;
@@ -38,19 +38,19 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
 
     @NonNull
     @Override
-    public MovieViewHoled onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public MovieViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
         .inflate(
                 R.layout.movie_item,
                 parent,
                 false
                 );
-        return new MovieViewHoled(view);
+        return new MovieViewHolder(view);
     }
 
     @SuppressLint("SetTextI18n")
     @Override
-    public void onBindViewHolder(@NonNull MovieViewHoled holder, int position) {
+    public void onBindViewHolder(@NonNull MovieViewHolder holder, int position) {
         Movie movie = movies.get(position);
 
         Glide.with(holder.itemView)
@@ -97,13 +97,13 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
         return movies.size();
     }
 
-    public static class MovieViewHoled extends RecyclerView.ViewHolder {
+    public static class MovieViewHolder extends RecyclerView.ViewHolder {
 
         private final ImageView imageViewPoster;
         private final TextView textViewRating;
 
 
-        public MovieViewHoled(@NonNull View itemView) {
+        public MovieViewHolder(@NonNull View itemView) {
             super(itemView);
             textViewRating = itemView.findViewById(R.id.textViewRating);
             imageViewPoster = itemView.findViewById(R.id.imageViewPoster);

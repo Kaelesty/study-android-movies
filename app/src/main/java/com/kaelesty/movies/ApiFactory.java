@@ -6,7 +6,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ApiFactory {
 
-    private static final String URL = "https://api.kinopoisk.dev/";
+    private static final String URL = "https://api.kinopoisk.dev/v1/";
 
     private static ApiService apiService;
 

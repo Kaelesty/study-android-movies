@@ -3,6 +3,8 @@ package com.kaelesty.movies;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
 import android.content.Intent;
@@ -20,6 +22,9 @@ public class MovieDetailsActivity extends AppCompatActivity {
 
     private MovieDetailsViewModel viewModel;
 
+    private TrailersAdapter adapter;
+
+    private RecyclerView recyclerView;
     private ImageView imageViewPoster;
     private TextView textViewTitle;
     private TextView textViewYear;
@@ -31,6 +36,11 @@ public class MovieDetailsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_movie_details);
         initViews();
 
+
+        adapter = new TrailersAdapter();
+        recyclerView.setAdapter(adapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
         viewModel = new ViewModelProvider(this).get(MovieDetailsViewModel.class);
 
         Movie movie = (Movie) getIntent().getSerializableExtra(MOVIE_EXTRA_KEY);
@@ -39,7 +49,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
         viewModel.getTrailers().observe(this, new Observer<List<Trailer>>() {
             @Override
             public void onChanged(List<Trailer> trailers) {
-
+                adapter.setTrailers(trailers);
             }
         });
 
@@ -51,6 +61,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
         textViewTitle = findViewById(R.id.textViewTitle);
         textViewYear = findViewById(R.id.textViewYear);
         textViewDesc = findViewById(R.id.textViewDesc);
+        recyclerView = findViewById(R.id.recyclerViewTrailers);
     }
 
     private void setMovieContent(Movie movie) {

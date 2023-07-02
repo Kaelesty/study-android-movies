@@ -74,7 +74,7 @@ public class MainViewModel extends AndroidViewModel {
                 }, new Consumer<Throwable>() {
                     @Override
                     public void accept(Throwable throwable) throws Throwable {
-                        Log.d(TAG, "setMovies failed");
+                        Log.d(TAG, "setMovies failed" + throwable.toString());
                     }
                 });
         subsrcibes.add(disposable);
