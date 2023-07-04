@@ -80,7 +80,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
                 }
             });
         }
-        if (position == movies.size() - 10) {
+        if (position == movies.size() - 10 && onReachEndListener != null) {
             onReachEndListener.onReachEnd();
         }
     }
