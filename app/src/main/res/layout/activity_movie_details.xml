@@ -20,6 +20,15 @@
             android:contentDescription="@null"
             />
 
+        <ImageView
+            android:id="@+id/imageViewFavorite"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="8sp"
+            app:layout_constraintTop_toBottomOf="@id/imageViewPoster"
+            app:layout_constraintEnd_toEndOf="@id/imageViewPoster"
+            tools:src="@android:drawable/star_big_off" />
+
         <TextView
             android:id="@+id/textViewTitle"
             android:layout_width="match_parent"

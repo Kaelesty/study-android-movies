@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,22 +24,26 @@ public class MovieDetailsViewModel extends AndroidViewModel {
 
     public static final String TAG = "MovieDetailsViewModel";
 
-    private int movieId;
+    private MovieDatabase db;
+
+    private Movie movie;
 
     private final MutableLiveData<List<Trailer>> trailers = new MutableLiveData<>();
     private final MutableLiveData<List<Review>> reviews = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> isFavorite = new MutableLiveData<>();
+    private MutableLiveData<Boolean> isLoading = new MutableLiveData<>();
 
     private final CompositeDisposable subscribes = new CompositeDisposable();
-
-    private MutableLiveData<Boolean> isLoading = new MutableLiveData<>();
 
     int reviewsPage = 1;
 
 
-    public MovieDetailsViewModel(@NonNull Application application, int movieId) {
+    public MovieDetailsViewModel(@NonNull Application application, Movie movie) {
         super(application);
-        this.movieId = movieId;
+        this.movie = movie;
         loadReviews();
+
+        db = MovieDatabase.getInstance(getApplication());
     }
 
     public void loadReviews() {
@@ -49,7 +54,7 @@ public class MovieDetailsViewModel extends AndroidViewModel {
             }
         }
         Log.d(TAG, "loadReviews()" + loading);
-        Disposable disposable = ApiFactory.getApiService().loadReviews(movieId, reviewsPage)
+        Disposable disposable = ApiFactory.getApiService().loadReviews(movie.getId(), reviewsPage)
                 .subscribeOn(Schedulers.io())
                 .doOnSubscribe(new Consumer<Disposable>() {
                     @Override
@@ -129,6 +134,24 @@ public class MovieDetailsViewModel extends AndroidViewModel {
 
     public LiveData<List<Trailer>> getTrailers() {
         return trailers;
+    }
+
+    public LiveData<Movie> getIsFavorite() {
+        return db.moviesDao().getFavorite(movie.getId());
+    }
+
+    public void addMovieToFavorites() {
+        Disposable disposable = db.moviesDao().add(movie)
+                .subscribeOn(Schedulers.io())
+                .subscribe();
+        subscribes.add(disposable);
+    }
+
+    public void removeMovieFromFavorites() {
+        Disposable disposable = db.moviesDao().remove(movie.getId())
+                .subscribeOn(Schedulers.io())
+                .subscribe();
+        subscribes.add(disposable);
     }
 
     @Override

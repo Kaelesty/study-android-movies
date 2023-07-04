@@ -7,17 +7,17 @@ import androidx.lifecycle.ViewModelProvider;
 
 public class MovieDetailsViewModelFactory implements ViewModelProvider.Factory {
     private Application application;
-    private int movieId;
+    private Movie movie;
 
 
-    public MovieDetailsViewModelFactory(Application application, int movieId) {
+    public MovieDetailsViewModelFactory(Application application, Movie movie) {
         this.application = application;
-        this.movieId = movieId;
+        this.movie = movie;
     }
 
 
     @Override
     public <T extends ViewModel> T create(Class<T> modelClass) {
-        return (T) new MovieDetailsViewModel(application, movieId);
+        return (T) new MovieDetailsViewModel(application, movie);
     }
 }

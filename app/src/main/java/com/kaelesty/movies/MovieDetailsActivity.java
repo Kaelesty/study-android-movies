@@ -10,6 +10,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -18,6 +20,8 @@ import com.bumptech.glide.Glide;
 import java.util.List;
 
 public class MovieDetailsActivity extends AppCompatActivity {
+
+    public static final String TAG = "MovieDetailsActivity";
 
     public static final String MOVIE_EXTRA_KEY = "movie";
 
@@ -30,9 +34,16 @@ public class MovieDetailsActivity extends AppCompatActivity {
     private RecyclerView recyclerViewReviews;
 
     private ImageView imageViewPoster;
+    private ImageView imageViewFavorite;
     private TextView textViewTitle;
     private TextView textViewYear;
     private TextView textViewDesc;
+
+    private Movie movie = null;
+
+    private Boolean isFavorite;
+
+    private MovieDatabase db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,7 +51,23 @@ public class MovieDetailsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_movie_details);
         initViews();
 
-        Movie movie = (Movie) getIntent().getSerializableExtra(MOVIE_EXTRA_KEY);
+        movie = (Movie) getIntent().getSerializableExtra(MOVIE_EXTRA_KEY);
+
+        db = MovieDatabase.getInstance(getApplication());
+
+        db.moviesDao().getFavorite(movie.getId()).observe(this, new Observer<Movie>() {
+            @Override
+            public void onChanged(Movie movie) {
+                if (movie != null) {
+                    isFavorite = true;
+                    imageViewFavorite.setImageResource(android.R.drawable.star_big_on);
+                }
+                else {
+                    isFavorite = false;
+                    imageViewFavorite.setImageResource(android.R.drawable.star_big_off);
+                }
+            }
+        });
 
         trailersAdapter = new TrailersAdapter();
         trailersAdapter.setOnClickListener(new TrailersAdapter.OnClickListener() {
@@ -59,7 +86,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
         recyclerViewReviews.setAdapter(reviewsAdapter);
         recyclerViewReviews.setLayoutManager(new LinearLayoutManager(this));
 
-        viewModel = new MovieDetailsViewModelFactory(getApplication(), movie.getId()).create(MovieDetailsViewModel.class);
+        viewModel = new MovieDetailsViewModelFactory(getApplication(), movie).create(MovieDetailsViewModel.class);
 
         viewModel.loadTrailers(movie.getId());
         viewModel.getTrailers().observe(this, new Observer<List<Trailer>>() {
@@ -77,6 +104,30 @@ public class MovieDetailsActivity extends AppCompatActivity {
         });
 
         setMovieContent(movie);
+
+        viewModel.getIsFavorite().observe(this, new Observer<Movie>() {
+            @Override
+            public void onChanged(Movie dbMovie) {
+                if (dbMovie != null) {
+                    imageViewFavorite.setImageResource(android.R.drawable.star_big_on);
+                    imageViewFavorite.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            viewModel.removeMovieFromFavorites();
+                        }
+                    });
+                }
+                else {
+                    imageViewFavorite.setImageResource(android.R.drawable.star_big_off);
+                    imageViewFavorite.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            viewModel.addMovieToFavorites();
+                        }
+                    });
+                }
+            }
+        });
     }
 
     private void initViews() {
@@ -86,6 +137,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
         textViewDesc = findViewById(R.id.textViewDesc);
         recyclerViewTrailers = findViewById(R.id.recyclerViewTrailers);
         recyclerViewReviews = findViewById(R.id.recyclerViewReviews);
+        imageViewFavorite = findViewById(R.id.imageViewFavorite);
     }
 
     private void setMovieContent(Movie movie) {
