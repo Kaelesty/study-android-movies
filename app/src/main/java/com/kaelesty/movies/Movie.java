@@ -1,13 +1,18 @@
 package com.kaelesty.movies;
 
 import androidx.annotation.NonNull;
+import androidx.room.Embedded;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
 
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 
+@Entity(tableName = "movies")
 public class Movie implements Serializable {
 
+    @PrimaryKey
     @SerializedName("id")
     private int id;
 
@@ -20,9 +25,11 @@ public class Movie implements Serializable {
     @SerializedName("year")
     private int year;
 
+    @Embedded
     @SerializedName("poster")
     private Poster poster;
 
+    @Embedded
     @SerializedName("rating")
     private Rating rating;
 
