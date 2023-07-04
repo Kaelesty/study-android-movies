@@ -20,6 +20,10 @@ public class ReviewsAdapter extends RecyclerView.Adapter<ReviewsAdapter.ReviewsV
 
     public static final String TAG = "ReviewsAdapter";
 
+    public static final String REVIEW_TYPE_POSITIVE = "Позитивный";
+    public static final String REVIEW_TYPE_NEGATIVE = "Негативный";
+    public static final String REVIEW_TYPE_NEUTRAL = "Нейтральный";
+
     private List<Review> reviews = new ArrayList<>();
 
     public void setReviews(List<Review> reviews) {
@@ -43,21 +47,18 @@ public class ReviewsAdapter extends RecyclerView.Adapter<ReviewsAdapter.ReviewsV
         Review review = reviews.get(position);
         holder.textViewAuthor.setText(review.getAuthor());
         holder.textViewReview.setText(review.getReview());
-        int color = 0;
-        try {
-            if (Objects.equals(review.getType(), "Позитивный"))
+        int color = android.R.color.holo_orange_light;;
+        String type = review.getType();
+        if (type != null) {
+            switch (type) {
+                case REVIEW_TYPE_POSITIVE:
                     color = android.R.color.holo_green_light;
-            else if (Objects.equals(review.getType(), "Негативный")) {
-                color = android.R.color.holo_red_light;
-            }
-            else {
-                color = android.R.color.holo_orange_light;
+                    break;
+                case REVIEW_TYPE_NEGATIVE:
+                    color = android.R.color.holo_red_light;
+                    break;
             }
         }
-        catch (NullPointerException e) {
-            color = android.R.color.holo_orange_light;
-        }
-
         holder.cardViewReview.setCardBackgroundColor(ContextCompat.getColor(holder.itemView.getContext(), color));
     }
 
@@ -68,9 +69,9 @@ public class ReviewsAdapter extends RecyclerView.Adapter<ReviewsAdapter.ReviewsV
 
     public static class ReviewsViewHolder extends RecyclerView.ViewHolder {
 
-        private TextView textViewAuthor;
-        private TextView textViewReview;
-        private CardView cardViewReview;
+        private final TextView textViewAuthor;
+        private final TextView textViewReview;
+        private final CardView cardViewReview;
 
         public ReviewsViewHolder(@NonNull View itemView) {
             super(itemView);
