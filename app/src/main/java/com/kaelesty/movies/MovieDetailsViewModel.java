@@ -23,41 +23,44 @@ public class MovieDetailsViewModel extends AndroidViewModel {
 
     public static final String TAG = "MovieDetailsViewModel";
 
+    private int movieId;
+
     private final MutableLiveData<List<Trailer>> trailers = new MutableLiveData<>();
     private final MutableLiveData<List<Review>> reviews = new MutableLiveData<>();
 
     private final CompositeDisposable subscribes = new CompositeDisposable();
 
-    private MutableLiveData<Boolean> isLoadingReviews = new MutableLiveData<>();
+    private MutableLiveData<Boolean> isLoading = new MutableLiveData<>();
 
     int reviewsPage = 1;
 
 
-    public MovieDetailsViewModel(@NonNull Application application) {
+    public MovieDetailsViewModel(@NonNull Application application, int movieId) {
         super(application);
-        isLoadingReviews.postValue(false);
+        this.movieId = movieId;
+        loadReviews();
     }
 
-    public void loadReviews(int movieId) {
-        Boolean isLoading = isLoadingReviews.getValue();
-        if (isLoading != null) {
-            if (isLoading) {
+    public void loadReviews() {
+        Boolean loading = isLoading.getValue();
+        if (loading != null) {
+            if (loading) {
                 return;
             }
         }
-        Log.d(TAG, "loadReviews()");
+        Log.d(TAG, "loadReviews()" + loading);
         Disposable disposable = ApiFactory.getApiService().loadReviews(movieId, reviewsPage)
                 .subscribeOn(Schedulers.io())
                 .doOnSubscribe(new Consumer<Disposable>() {
                     @Override
                     public void accept(Disposable disposable) throws Throwable {
-                        isLoadingReviews.postValue(true);
+                        isLoading.postValue(true);
                     }
                 })
                 .doAfterTerminate(new Action() {
                     @Override
                     public void run() throws Throwable {
-                        isLoadingReviews.postValue(false);
+                        isLoading.postValue(false);
                     }
                 })
                 .observeOn(AndroidSchedulers.mainThread())

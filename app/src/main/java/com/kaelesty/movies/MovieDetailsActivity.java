@@ -40,6 +40,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_movie_details);
         initViews();
 
+        Movie movie = (Movie) getIntent().getSerializableExtra(MOVIE_EXTRA_KEY);
 
         trailersAdapter = new TrailersAdapter();
         trailersAdapter.setOnClickListener(new TrailersAdapter.OnClickListener() {
@@ -58,9 +59,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
         recyclerViewReviews.setAdapter(reviewsAdapter);
         recyclerViewReviews.setLayoutManager(new LinearLayoutManager(this));
 
-        viewModel = new ViewModelProvider(this).get(MovieDetailsViewModel.class);
-
-        Movie movie = (Movie) getIntent().getSerializableExtra(MOVIE_EXTRA_KEY);
+        viewModel = new MovieDetailsViewModelFactory(getApplication(), movie.getId()).create(MovieDetailsViewModel.class);
 
         viewModel.loadTrailers(movie.getId());
         viewModel.getTrailers().observe(this, new Observer<List<Trailer>>() {
@@ -69,15 +68,6 @@ public class MovieDetailsActivity extends AppCompatActivity {
                 trailersAdapter.setTrailers(trailers);
             }
         });
-
-        reviewsAdapter.setOnReachEndListener(new ReviewsAdapter.OnReachEndListener() {
-            @Override
-            public void onReachEnd() {
-                viewModel.loadReviews(movie.getId());
-            }
-        });
-
-        viewModel.loadReviews(movie.getId());
 
         viewModel.getReviews().observe(this, new Observer<List<Review>>() {
             @Override

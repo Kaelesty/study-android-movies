@@ -1,6 +1,7 @@
 package com.kaelesty.movies;
 
 import android.annotation.SuppressLint;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,13 +18,9 @@ import java.util.Objects;
 
 public class ReviewsAdapter extends RecyclerView.Adapter<ReviewsAdapter.ReviewsViewHolder> {
 
+    public static final String TAG = "ReviewsAdapter";
+
     private List<Review> reviews = new ArrayList<>();
-
-    private OnReachEndListener onReachEndListener;
-
-    public void setOnReachEndListener(OnReachEndListener onReachEndListener) {
-        this.onReachEndListener = onReachEndListener;
-    }
 
     public void setReviews(List<Review> reviews) {
         this.reviews = reviews;
@@ -62,10 +59,6 @@ public class ReviewsAdapter extends RecyclerView.Adapter<ReviewsAdapter.ReviewsV
         }
 
         holder.cardViewReview.setCardBackgroundColor(ContextCompat.getColor(holder.itemView.getContext(), color));
-
-        if (position == reviews.size() - 1) {
-            onReachEndListener.onReachEnd();
-        }
     }
 
     @Override
